@@ -1,6 +1,24 @@
-vending-machine-container {
+.vending-machine-container {
   display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  margin: 0 auto;
+  height: 70vh;
+  border: 1px solid black;
+  div {
+    padding: 1rem;
+  }
+  .products {
+    width: 70%;
+  }
+  .balance-and-buttons {
+    width: 30%;
+    border-left: 1px solid black;
+    .balance {
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+    }
+  }
 }
