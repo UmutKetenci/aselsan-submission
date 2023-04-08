@@ -1,14 +1,15 @@
 import { createStore, combineReducers } from "redux";
 import Money from "../components/Money";
+
 /* VENDING MACHINE STATE */
 export interface VendingMachineState {
-  money: number;
+  balance: number;
   products: Product[];
   selectedProduct: Product | null;
   refundAmount: number;
 }
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   price: number;
@@ -16,7 +17,7 @@ interface Product {
 }
 
 export const initialVendingMachineState: VendingMachineState = {
-  money: 0,
+  balance: 0,
   products: [
     { id: 1, name: "Water", price: 25, quantity: 10 },
     { id: 2, name: "Coke", price: 35, quantity: 10 },
@@ -41,9 +42,9 @@ enum VendingMachineActionTypes {
   RESET_MACHINE = "RESET_MACHINE",
 }
 
-interface SelectProductAction {
+interface SelectProductNumberAction {
   type: typeof VendingMachineActionTypes.SELECT_PRODUCT;
-  payload: Product;
+  payload: number;
 }
 
 interface AcceptMoneyAction {
@@ -68,7 +69,7 @@ interface ResetMachineAction {
 }
 
 type VendingMachineActions =
-  | SelectProductAction
+  | SelectProductNumberAction
   | AcceptMoneyAction
   | CancelProcessAction
   | CollectMoneyAction
@@ -81,42 +82,80 @@ function vendingMachineReducer(
 ): VendingMachineState {
   switch (action.type) {
     case VendingMachineActionTypes.SELECT_PRODUCT:
-      return {
-        ...state,
-        selectedProduct: action.payload,
-      };
+      const selection = state.products.find((product: Product) => {
+        return product.id === action.payload;
+      });
+      if (selection && selection.name) {
+        return {
+          ...state,
+          selectedProduct: selection,
+        };
+      } else {
+        console.log("Seçili slotta ürün bulunmamaktadır.");
+        return state;
+      }
     case VendingMachineActionTypes.ACCEPT_MONEY:
-      console.log("heyo", state.money);
+      console.log("hii");
+
       return {
         ...state,
-        money: state.money + action.payload,
+        balance: state.balance + action.payload,
       };
     case VendingMachineActionTypes.CANCEL_PROCESS:
+      if (state.balance > 0) {
+        console.log(`${state.balance} unit money refunded back to customer`);
+      }
+
       return {
         ...state,
         selectedProduct: null,
-        refundAmount: state.money,
-        money: 0,
+        refundAmount: state.balance,
+        balance: 0,
       };
     case VendingMachineActionTypes.COMPLETE_PURCHASE:
-      const productPrice = state.selectedProduct?.price ?? 0;
-      const change = state.money - productPrice;
-      return {
-        ...state,
-        selectedProduct: null,
-        money: 0,
-        refundAmount: change < 0 ? state.money : change,
-      };
+      if (
+        state.selectedProduct &&
+        state.selectedProduct.quantity > 0 &&
+        state.balance - state.selectedProduct.price >= 0
+      ) {
+        const productPrice = state.selectedProduct?.price || 0;
+        const updatedProducts = [...state.products];
+        const productIndex = updatedProducts.findIndex((product) => {
+          return product.id === state.selectedProduct?.id;
+        });
+        updatedProducts[productIndex].quantity--;
+        return {
+          ...state,
+          selectedProduct: null,
+          balance: state.balance - productPrice,
+          products: updatedProducts,
+        };
+      } else {
+        if (state.selectedProduct && state.selectedProduct?.quantity <= 0) {
+          console.log(`No ${state.selectedProduct?.name} left on stock`);
+        } else if (
+          state.selectedProduct &&
+          state.balance - state.selectedProduct.price < 0
+        ) {
+          console.log("Insufficient funds.");
+        }
+        return state;
+      }
+
     case VendingMachineActionTypes.COLLECT_MONEY:
+      console.log(`You have earned ${state.balance} unit money`);
       return {
         ...state,
+        balance: 0,
         refundAmount: 0,
       };
     case VendingMachineActionTypes.RESET_MACHINE:
+      console.log("Machine is reset");
+
       return {
         products: [],
         selectedProduct: null,
-        money: 0,
+        balance: 0,
         refundAmount: 0,
       };
     default:
@@ -125,11 +164,12 @@ function vendingMachineReducer(
 }
 
 export function acceptMoney(amount: number): AcceptMoneyAction {
-  console.log(amount);
   return { type: VendingMachineActionTypes.ACCEPT_MONEY, payload: amount };
 }
 
-export function selectProduct(selection: Product): SelectProductAction {
+export function selectProductNumber(
+  selection: number
+): SelectProductNumberAction {
   return { type: VendingMachineActionTypes.SELECT_PRODUCT, payload: selection };
 }
 
@@ -166,7 +206,6 @@ enum ScamProtectionActionTypes {
 
 interface DetectScammingAction {
   type: ScamProtectionActionTypes.DETECT_SCAM;
-  payload: number;
 }
 
 interface StopScammingAction {
@@ -181,11 +220,20 @@ export function scamProtectionReducer(
 ): ScamProtectionState {
   switch (action.type) {
     case ScamProtectionActionTypes.DETECT_SCAM:
+      console.log("hii");
+
       return { ...state, scamming: true };
     case ScamProtectionActionTypes.STOP_SCAM:
       return { ...state, scamming: true };
   }
-  return { ...state };
+  return state;
+}
+
+export function detectScam(): DetectScammingAction {
+  return { type: ScamProtectionActionTypes.DETECT_SCAM };
+}
+export function stopScam(): StopScammingAction {
+  return { type: ScamProtectionActionTypes.STOP_SCAM };
 }
 
 /* Temperature state */
@@ -251,6 +299,16 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer);
 
 export default store;
+
+/* Energy State */
+
+interface EnergyState {
+  cost: number;
+}
+
+const initialEnergyState = {
+  cost: 0,
+};
 
 /*  Money constant */
 export const moneyArray: Money[] = [

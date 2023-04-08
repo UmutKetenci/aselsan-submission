@@ -10,10 +10,18 @@ const Money = (props: Money) => {
   const dispatch = useDispatch();
 
   const handleInsertMoney = (amount: number): void => {
-    dispatch(acceptMoney(props.amount));
+    dispatch(acceptMoney(amount));
   };
 
-  return <div onClick={() => handleInsertMoney(props.amount)}>Money</div>;
+  return (
+    <div
+      className="money"
+      style={{ backgroundColor: props.color }}
+      onClick={() => handleInsertMoney(props.amount)}
+    >
+      {props.amount}
+    </div>
+  );
 };
 
 export default Money;
