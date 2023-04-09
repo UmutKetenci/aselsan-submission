@@ -182,7 +182,7 @@ function vendingMachineReducer(
         balance: 0,
         refundAmount: 0,
         earnedMoney: 0,
-        time: state.time + 5,
+        time: 0,
       };
     case VendingMachineActionTypes.INCREASE_TIME:
       return { ...state, time: state.time + 1 };
