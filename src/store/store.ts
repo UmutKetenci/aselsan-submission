@@ -1,5 +1,6 @@
 import { createStore, combineReducers } from "redux";
-import Money from "../components/Money";
+import Money from "../components/Money/Money";
+import { toast } from "react-toastify";
 
 /* VENDING MACHINE STATE */
 export interface VendingMachineState {
@@ -7,6 +8,8 @@ export interface VendingMachineState {
   products: Product[];
   selectedProduct: Product | null;
   refundAmount: number;
+  earnedMoney: number;
+  time: number;
 }
 
 export interface Product {
@@ -31,6 +34,8 @@ export const initialVendingMachineState: VendingMachineState = {
   ],
   selectedProduct: null,
   refundAmount: 0,
+  earnedMoney: 0,
+  time: 0,
 };
 
 enum VendingMachineActionTypes {
@@ -40,6 +45,7 @@ enum VendingMachineActionTypes {
   CANCEL_PROCESS = "CANCEL_PROCESS",
   COLLECT_MONEY = "COLLECT_MONEY",
   RESET_MACHINE = "RESET_MACHINE",
+  INCREASE_TIME = "INCREASE_TIME",
 }
 
 interface SelectProductNumberAction {
@@ -68,13 +74,18 @@ interface ResetMachineAction {
   type: typeof VendingMachineActionTypes.RESET_MACHINE;
 }
 
+interface IncreaseTimeAction {
+  type: typeof VendingMachineActionTypes.INCREASE_TIME;
+}
+
 type VendingMachineActions =
   | SelectProductNumberAction
   | AcceptMoneyAction
   | CancelProcessAction
   | CollectMoneyAction
   | ResetMachineAction
-  | CompletePurchaseAction;
+  | CompletePurchaseAction
+  | IncreaseTimeAction;
 
 function vendingMachineReducer(
   state = initialVendingMachineState,
@@ -91,19 +102,18 @@ function vendingMachineReducer(
           selectedProduct: selection,
         };
       } else {
-        console.log("Seçili slotta ürün bulunmamaktadır.");
+        toast("Seçili slotta ürün bulunmamaktadır.");
         return state;
       }
     case VendingMachineActionTypes.ACCEPT_MONEY:
-      console.log("hii");
-
+      /* buraya girmeden önce scam protection yapılmalı. o reducer a göre accept money action'una girmeli */
       return {
         ...state,
         balance: state.balance + action.payload,
       };
     case VendingMachineActionTypes.CANCEL_PROCESS:
       if (state.balance > 0) {
-        console.log(`${state.balance} unit money refunded back to customer`);
+        toast(`${state.balance} unit money refunded back to customer`);
       }
 
       return {
@@ -111,6 +121,7 @@ function vendingMachineReducer(
         selectedProduct: null,
         refundAmount: state.balance,
         balance: 0,
+        time: state.time + 5,
       };
     case VendingMachineActionTypes.COMPLETE_PURCHASE:
       if (
@@ -124,40 +135,58 @@ function vendingMachineReducer(
           return product.id === state.selectedProduct?.id;
         });
         updatedProducts[productIndex].quantity--;
+        toast(`${state.selectedProduct.name} is sold.`);
+
         return {
           ...state,
           selectedProduct: null,
           balance: state.balance - productPrice,
           products: updatedProducts,
+          earnedMoney: state.selectedProduct.price + state.earnedMoney,
+          time: state.time + 5,
         };
       } else {
         if (state.selectedProduct && state.selectedProduct?.quantity <= 0) {
-          console.log(`No ${state.selectedProduct?.name} left on stock`);
+          toast(`No ${state.selectedProduct?.name} left on stock`);
         } else if (
           state.selectedProduct &&
           state.balance - state.selectedProduct.price < 0
         ) {
-          console.log("Insufficient funds.");
+          toast("Insufficient funds.");
         }
-        return state;
+        return { ...state, time: state.time + 5 };
       }
 
     case VendingMachineActionTypes.COLLECT_MONEY:
-      console.log(`You have earned ${state.balance} unit money`);
+      if (state.earnedMoney + state.balance > 0) {
+        toast(
+          `You have earned ${state.earnedMoney + state.balance} unit money`
+        );
+        return {
+          ...state,
+          balance: 0,
+          refundAmount: 0,
+          earnedMoney: 0,
+          time: state.time + 5,
+        };
+      } else {
+        toast("There is no money to collect.");
+        return state;
+      }
+
+    case VendingMachineActionTypes.RESET_MACHINE:
+      toast("Machine is reset");
       return {
         ...state,
-        balance: 0,
-        refundAmount: 0,
-      };
-    case VendingMachineActionTypes.RESET_MACHINE:
-      console.log("Machine is reset");
-
-      return {
         products: [],
         selectedProduct: null,
         balance: 0,
         refundAmount: 0,
+        earnedMoney: 0,
+        time: state.time + 5,
       };
+    case VendingMachineActionTypes.INCREASE_TIME:
+      return { ...state, time: state.time + 1 };
     default:
       return state;
   }
@@ -177,7 +206,7 @@ export function completePurchase(): CompletePurchaseAction {
   return { type: VendingMachineActionTypes.COMPLETE_PURCHASE };
 }
 
-export function refundMoney(): CollectMoneyAction {
+export function collectMoney(): CollectMoneyAction {
   return { type: VendingMachineActionTypes.COLLECT_MONEY };
 }
 
@@ -187,6 +216,10 @@ export function cancelProcess(): CancelProcessAction {
 
 export function resetMachine(): ResetMachineAction {
   return { type: VendingMachineActionTypes.RESET_MACHINE };
+}
+
+export function increaseTime(): IncreaseTimeAction {
+  return { type: VendingMachineActionTypes.INCREASE_TIME };
 }
 
 /* SCAM PROTECTION STATE */
@@ -220,8 +253,6 @@ export function scamProtectionReducer(
 ): ScamProtectionState {
   switch (action.type) {
     case ScamProtectionActionTypes.DETECT_SCAM:
-      console.log("hii");
-
       return { ...state, scamming: true };
     case ScamProtectionActionTypes.STOP_SCAM:
       return { ...state, scamming: true };
@@ -238,14 +269,16 @@ export function stopScam(): StopScammingAction {
 
 /* Temperature state */
 
-interface TemperatureState {
+export interface TemperatureState {
   temperature: number;
   isOverheating: boolean;
+  selectedTemperatureCelsius: number;
 }
 
 const initialTemperatureState: TemperatureState = {
   temperature: 25,
   isOverheating: true,
+  selectedTemperatureCelsius: 20,
 };
 
 enum TemperatureTypes {
@@ -269,9 +302,32 @@ export function temperatureReducer(
 ): TemperatureState {
   switch (action.type) {
     case TemperatureTypes.COOLING:
-      return { isOverheating: true, temperature: state.temperature - 2 };
+      if (state.temperature > state.selectedTemperatureCelsius) {
+        return {
+          ...state,
+          isOverheating: true,
+          temperature: state.temperature - 1,
+        };
+      }
+      return {
+        ...state,
+        temperature: state.temperature - 1,
+        isOverheating: false,
+      };
     case TemperatureTypes.HEATING:
-      return { isOverheating: false, temperature: state.temperature + 2 };
+      if (state.temperature < state.selectedTemperatureCelsius)
+        return {
+          ...state,
+          isOverheating: false,
+          temperature: state.temperature + 1,
+        };
+      else {
+        return {
+          ...state,
+          temperature: state.temperature + 1,
+          isOverheating: true,
+        };
+      }
   }
   return { ...state };
 }

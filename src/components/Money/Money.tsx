@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { acceptMoney } from "../store/store";
+import { acceptMoney } from "../../store/store";
+import { toast } from "react-toastify";
 
 interface Money {
   color: string;
@@ -10,6 +11,7 @@ const Money = (props: Money) => {
   const dispatch = useDispatch();
 
   const handleInsertMoney = (amount: number): void => {
+    toast(`Inserted ${amount} unit money.`);
     dispatch(acceptMoney(amount));
   };
 
@@ -19,7 +21,7 @@ const Money = (props: Money) => {
       style={{ backgroundColor: props.color }}
       onClick={() => handleInsertMoney(props.amount)}
     >
-      {props.amount}
+      {props.amount} Unit Money
     </div>
   );
 };

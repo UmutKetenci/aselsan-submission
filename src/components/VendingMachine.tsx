@@ -2,14 +2,19 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import {
   RootState,
+  VendingMachineState,
   cancelProcess,
+  collectMoney,
   completePurchase,
+  increaseTemperature,
+  increaseTime,
   moneyArray,
+  resetMachine,
   selectProductNumber,
 } from "../store/store";
 import { useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import Money from "./Money";
+import Money from "./Money/Money";
 import { Button } from "@mui/material";
 import Products from "./Products/Products";
 import BalanceDisplay from "./DigitalDisplay/BalanceDisplay";
@@ -18,16 +23,23 @@ import Temperature from "./Temperature/Temperature";
 import Energy from "./Energy/Energy";
 
 const VendingMachine = () => {
-  const balance = useSelector(
-    (state: RootState) => state.vendingMachineState.balance
+  const vendingMachineState: VendingMachineState = useSelector(
+    (state: RootState) => state.vendingMachineState
   );
   const [selection, setSelection] = React.useState(0);
   const dispatch: Dispatch = useDispatch();
   const buttonNumbers = Array.from({ length: 9 }, (_, index) => index + 1);
   const handleCompletePurchase = () => {
+    dispatch(increaseTemperature());
     dispatch(completePurchase());
     setSelection(0);
   };
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      dispatch(increaseTime());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
   return (
     <>
       <div className="vending-machine-container">
@@ -50,8 +62,7 @@ const VendingMachine = () => {
                     dispatch(selectProductNumber(button));
                   }}
                 >
-                  {" "}
-                  {button}{" "}
+                  {button}
                 </Button>
               );
             })}
@@ -71,24 +82,30 @@ const VendingMachine = () => {
             </Button>
           </div>
         </div>
-      </div>
-      <div className="money-temperature-energy-container">
-        <div className="money-container">
-          {moneyArray.map((money: Money) => {
-            return (
-              <Money
-                key={money.color}
-                color={money.color}
-                amount={money.amount}
-              />
-            );
-          })}
-        </div>
-        <div>
-          <Temperature></Temperature>
-        </div>
-        <div>
-          <Energy></Energy>
+        <div className="back-of-vending-machine">
+          <p>{vendingMachineState.time} minutes elapsed</p>
+          <div className="util-buttons">
+            <Button
+              variant="contained"
+              onClick={() => dispatch(resetMachine())}
+            >
+              Reset
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => dispatch(collectMoney())}
+            >
+              Collect Money
+            </Button>
+          </div>
+          <div className="temperature-energy-container">
+            <div>
+              <Temperature></Temperature>
+            </div>
+            <div>
+              <Energy></Energy>
+            </div>
+          </div>
         </div>
       </div>
     </>

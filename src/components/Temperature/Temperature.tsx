@@ -1,14 +1,31 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { RootState } from "../../store/store";
+import {
+  RootState,
+  TemperatureState,
+  decreaseTemperature,
+  increaseTemperature,
+} from "../../store/store";
 
 const Temperature = () => {
-  const temperatureState = useSelector((state: RootState) => {
+  const temperatureState: TemperatureState = useSelector((state: RootState) => {
     return state.temperatureState;
   });
   const dispatch = useDispatch();
-  return <div>{temperatureState.temperature}</div>;
+  React.useEffect(() => {
+    const temperature = setInterval(() => {
+      console.log(temperatureState);
+
+      if (temperatureState.isOverheating) {
+        dispatch(decreaseTemperature());
+      } else {
+        dispatch(increaseTemperature());
+      }
+    }, 5000);
+    return () => clearInterval(temperature);
+  }, [temperatureState.isOverheating]);
+  return <div>Temperature: {temperatureState.temperature}</div>;
 };
 
 export default Temperature;
