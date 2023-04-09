@@ -19,7 +19,7 @@ If the app doesn't open in your browser, you can access it by opening your brows
 
 **4) Building the app:**
 
-To build the app for production, run the command npm run build. This will create an optimized production build in the build folder.
+To build the app for production, run the command **npm run build**. This will create an optimized production build in the build folder.
 You can then deploy the contents of the build folder to your web server or hosting service.
 
 **5) About the app:**
