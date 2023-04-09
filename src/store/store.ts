@@ -346,7 +346,7 @@ export interface RootState {
   scamProtectionState: ScamProtectionState;
 }
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   vendingMachineState: vendingMachineReducer,
   temperatureState: temperatureReducer,
   scamProtectionState: scamProtectionReducer,
