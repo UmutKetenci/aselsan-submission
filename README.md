@@ -2,7 +2,7 @@ Prerequisites:
 
 Node.js version 14 or higher (you can download it from https://nodejs.org)
 
-You need a running computer as it is designed for computers (not responsive for other sizes yet.).
+You need a running computer as it is designed for computers with resolution using 1920x1080 (not responsive for other sizes yet.).
 
 Installation:
 
