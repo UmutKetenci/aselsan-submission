@@ -178,7 +178,6 @@ function vendingMachineReducer(
       toast("Machine is reset");
       return {
         ...state,
-        products: [],
         selectedProduct: null,
         balance: 0,
         refundAmount: 0,
