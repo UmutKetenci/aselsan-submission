@@ -15,8 +15,6 @@ const Temperature = () => {
   const dispatch = useDispatch();
   React.useEffect(() => {
     const temperature = setInterval(() => {
-      console.log(temperatureState);
-
       if (temperatureState.isOverheating) {
         dispatch(decreaseTemperature());
       } else {
