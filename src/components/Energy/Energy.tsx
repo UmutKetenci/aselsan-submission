@@ -6,7 +6,7 @@ import { RootState } from "../../store/store";
 const Energy = () => {
   const energyState = useSelector((state: RootState) => {});
   const dispatch = useDispatch();
-  return <div>Energy Consumption: </div>;
+  return <div>Energy Consumption: N/A </div>;
 };
 
 export default Energy;
