@@ -9,7 +9,7 @@ export interface VendingMachineState {
   selectedProduct: Product | null;
   refundAmount: number;
   earnedMoney: number;
-  time: number;
+  time: number; // States the elapsed time
 }
 
 export interface Product {
@@ -75,7 +75,7 @@ interface ResetMachineAction {
 }
 
 interface IncreaseTimeAction {
-  type: typeof VendingMachineActionTypes.INCREASE_TIME;
+  type: typeof VendingMachineActionTypes.INCREASE_TIME; //increases time in desired interval
 }
 
 type VendingMachineActions =
@@ -106,7 +106,7 @@ function vendingMachineReducer(
         return state;
       }
     case VendingMachineActionTypes.ACCEPT_MONEY:
-      /* buraya girmeden önce scam protection yapılmalı. o reducer a göre accept money action'una girmeli */
+      /* Scam protection functions should be activated here before this action. Should only go in if scamming:false */
       return {
         ...state,
         balance: state.balance + action.payload,
@@ -246,7 +246,7 @@ interface StopScammingAction {
 
 type ScamProtectionActions = DetectScammingAction | StopScammingAction;
 
-export function scamProtectionReducer(
+export function scamProtectionReducer( // I couldn't understand where and when I should detect scams.
   state = initialScamProtectionState,
   action: ScamProtectionActions
 ): ScamProtectionState {
@@ -271,7 +271,7 @@ export function stopScam(): StopScammingAction {
 export interface TemperatureState {
   temperature: number;
   isOverheating: boolean;
-  selectedTemperatureCelsius: number;
+  selectedTemperatureCelsius: number; // Desired temperature of the vending machine
 }
 
 const initialTemperatureState: TemperatureState = {
@@ -358,6 +358,7 @@ export default store;
 /* Energy State */
 
 interface EnergyState {
+  // This code is not used in anywhere of the app. I planned to use it when an action was being used. It would simply increase the cost by 2.
   cost: number;
 }
 
@@ -367,6 +368,7 @@ const initialEnergyState = {
 
 /*  Money constant */
 export const moneyArray: Money[] = [
+  // I wanted to store my moneyArray here for easy approach.
   { amount: 1, color: "gray" },
   { amount: 5, color: "brown" },
   { amount: 10, color: "red" },

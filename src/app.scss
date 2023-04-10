@@ -1,5 +1,6 @@
 $border-color-black: rgb(0, 0, 0);
 $border-radius: 5px;
+$vending-machine-bg-color: rgb(204, 201, 201);
 
 @mixin digital-display-item {
   border: 1px solid $border-color-black;
@@ -22,7 +23,7 @@ $border-radius: 5px;
 }
 /* Vending Machine */
 .vending-machine-container {
-  background-color: rgb(204, 201, 201);
+  background-color: $vending-machine-bg-color;
   display: flex;
   width: 65%;
   margin: 0 auto;

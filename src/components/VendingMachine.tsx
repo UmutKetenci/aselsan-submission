@@ -8,13 +8,11 @@ import {
   completePurchase,
   increaseTemperature,
   increaseTime,
-  moneyArray,
   resetMachine,
   selectProductNumber,
 } from "../store/store";
 import { useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import Money from "./Money/Money";
 import { Button } from "@mui/material";
 import Products from "./Products/Products";
 import BalanceDisplay from "./DigitalDisplay/BalanceDisplay";
@@ -28,7 +26,7 @@ const VendingMachine = () => {
   );
   const [selection, setSelection] = React.useState(0);
   const dispatch: Dispatch = useDispatch();
-  const buttonNumbers = Array.from({ length: 9 }, (_, index) => index + 1);
+  const buttonNumbers = Array.from({ length: 9 }, (_, index) => index + 1); //creates number buttons from 1 to 9
   const handleCompletePurchase = () => {
     dispatch(increaseTemperature());
     dispatch(completePurchase());
@@ -36,6 +34,7 @@ const VendingMachine = () => {
   };
   React.useEffect(() => {
     const timer = setInterval(() => {
+      //increases time
       dispatch(increaseTime());
     }, 1000);
     return () => clearInterval(timer);
