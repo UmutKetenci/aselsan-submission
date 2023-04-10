@@ -96,7 +96,7 @@ User may cancel the process and refund their money by using CANCEL button. <br/>
 User may reset the machine by using RESET button. <br/>
 User may collect money from the vending machine using COLLECT MONEY button. <br/>
 
-**7)Tests:** <br/> 
+**7) Tests:** <br/> 
 
 Basic tests are written for the application.
 
