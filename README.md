@@ -2,7 +2,7 @@
 
 **1) Prerequisites:**
 
-You need a running device with a resolution 1920x1080 (not responsive for other sizes yet).
+You need a running device with a resolution 1920x1080 (not responsive for other sizes yet). <br/>
 Node.js version 14 or higher (you can download it from https://nodejs.org)
 
 **2) Installation:**
@@ -28,22 +28,22 @@ This is a vending machine application and it is coded using React, TypeScript an
 
 The vending machine state consists of the following properties:
 
-balance: the current amount of money inserted by the customer
-products: an array of products available in the vending machine
-selectedProduct: the currently selected product by the customer
-refundAmount: the amount of money that will be refunded if the process is canceled
-earnedMoney: the amount of money earned by the vending machine
-time: the time elapsed since the vending machine was last reset
+balance: the current amount of money inserted by the customer <br/>
+products: an array of products available in the vending machine <br/>
+selectedProduct: the currently selected product by the customer <br/>
+refundAmount: the amount of money that will be refunded if the process is canceled <br/>
+earnedMoney: the amount of money earned by the vending machine <br/>
+time: the time elapsed since the vending machine was last reset <br/>
 
 The vending machine actions are defined in the VendingMachineActionTypes enum, and they are:
 
-SELECT_PRODUCT: selects a product based on its id
-ACCEPT_MONEY: accepts money from the customer
-COMPLETE_PURCHASE: completes the purchase of the selected product
-CANCEL_PROCESS: cancels the current process and refunds the money
-COLLECT_MONEY: collects the earned money from the vending machine
-RESET_MACHINE: resets the vending machine
-INCREASE_TIME: increases the elapsed time
+SELECT_PRODUCT: selects a product based on its id <br/>
+ACCEPT_MONEY: accepts money from the customer <br/>
+COMPLETE_PURCHASE: completes the purchase of the selected product <br/>
+CANCEL_PROCESS: cancels the current process and refunds the money <br/>
+COLLECT_MONEY: collects the earned money from the vending machine <br/>
+RESET_MACHINE: resets the vending machine <br/>
+INCREASE_TIME: increases the elapsed time <br/>
 
 The vendingMachineReducer function is responsible for updating the vending machine state based on the actions dispatched to the store. The reducer function takes two arguments: the current state and the action to be performed. The function returns a new state object with the updated values.
 
@@ -87,14 +87,16 @@ Interactions are defined as actions where user clicks a blue button.
 
 The code also imports the createStore and combineReducers functions from Redux and the toast function from the react-toastify library.
 
-**6) Usage Scenario:**
-User inserts money by clicking the money blocks that is below the vending machine.
-User selects a number to select a product respectively.
-User clicks OK button.If user has enough money, they receive the item. Else app gives a warning according to the error.
-User may cancel the process and refund their money by using CANCEL button.
-User may reset the machine by using RESET button.
-User may collect money from the vending machine using COLLECT MONEY button.
+**6) Usage Scenario:** <br/> 
 
-**7)Tests:**
+User inserts money by clicking the money blocks that is below the vending machine. <br/>
+User selects a number to select a product respectively. <br/>
+User clicks OK button.If user has enough money, they receive the item. Else app gives a warning according to the error. <br/>
+User may cancel the process and refund their money by using CANCEL button. <br/>
+User may reset the machine by using RESET button. <br/>
+User may collect money from the vending machine using COLLECT MONEY button. <br/>
+
+**7)Tests:** <br/> 
+
 Basic tests are written for the application.
 
