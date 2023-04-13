@@ -484,17 +484,17 @@ export function energyStateReducer(
         action.payload === EnergyConsumingTypes.BUTTON_INTERACTION &&
         state.button_interaction !== true
       ) {
-        return { ...state, button_interaction: true, cost: state.cost + 0.41 };
+        return { ...state, button_interaction: true, cost: state.cost + 0.16 };
       } else if (
         action.payload === EnergyConsumingTypes.HEAT_OR_COOL &&
         state.heat_or_cool !== true
       ) {
-        return { ...state, heat_or_cool: true, cost: state.cost + 0.41 };
+        return { ...state, heat_or_cool: true, cost: state.cost + 0.16 };
       } else if (
         action.payload === EnergyConsumingTypes.LIGHTS &&
         state.lights !== true
       ) {
-        return { ...state, lights: true, cost: state.cost + 0.41 };
+        return { ...state, lights: true, cost: state.cost + 0.16 };
       } else {
         return state;
       }
@@ -503,17 +503,17 @@ export function energyStateReducer(
         action.payload === EnergyConsumingTypes.BUTTON_INTERACTION &&
         state.button_interaction !== false
       ) {
-        return { ...state, button_interaction: false, cost: state.cost - 0.41 };
+        return { ...state, button_interaction: false, cost: state.cost - 0.16 };
       } else if (
         action.payload === EnergyConsumingTypes.HEAT_OR_COOL &&
         state.heat_or_cool !== false
       ) {
-        return { ...state, heat_or_cool: false, cost: state.cost - 0.41 };
+        return { ...state, heat_or_cool: false, cost: state.cost - 0.16 };
       } else if (
         action.payload === EnergyConsumingTypes.LIGHTS &&
         state.lights !== false
       ) {
-        return { ...state, lights: false, cost: state.cost - 0.41 };
+        return { ...state, lights: false, cost: state.cost - 0.16 };
       } else {
         return state;
       }

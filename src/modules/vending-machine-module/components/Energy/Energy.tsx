@@ -7,7 +7,11 @@ import {
   decreaseCost,
 } from "../../../../store/store";
 
-const Energy = () => {
+interface EnergyProps {
+  selection: number;
+}
+
+const Energy = (props: EnergyProps) => {
   const energyState: EnergyState = useSelector((state: RootState) => {
     return state.energyState;
   });
@@ -15,24 +19,18 @@ const Energy = () => {
 
   useEffect(() => {
     let buttonInteractionTimer: any;
-    let lightsTimer: any;
 
     if (energyState.button_interaction === true) {
+      clearTimeout(buttonInteractionTimer);
       buttonInteractionTimer = setTimeout(() => {
         dispatch(decreaseCost(EnergyConsumingTypes.BUTTON_INTERACTION));
-      }, 5000);
-    }
-
-    if (energyState.lights === true) {
-      lightsTimer = setTimeout(() => {
-        dispatch(decreaseCost(EnergyConsumingTypes.LIGHTS));
       }, 5000);
     }
 
     return () => {
       clearTimeout(buttonInteractionTimer);
     };
-  }, [energyState.button_interaction, energyState.lights]);
+  }, [props.selection]);
 
   return (
     <div>

@@ -8,6 +8,7 @@ import {
   cancelProcess,
   collectMoney,
   completePurchase,
+  decreaseCost,
   increaseCost,
   increaseProductTemperature,
   increaseTemperature,
@@ -39,7 +40,7 @@ const VendingMachine = () => {
     dispatch(increaseProductTemperature(selection));
     dispatch(increaseTemperature());
     dispatch(increaseCost(EnergyConsumingTypes.BUTTON_INTERACTION));
-    dispatch(increaseCost(EnergyConsumingTypes.LIGHTS));
+    dispatch(decreaseCost(EnergyConsumingTypes.LIGHTS));
     dispatch(completePurchase());
     setSelection(0);
   };
@@ -95,7 +96,10 @@ const VendingMachine = () => {
             </Button>
             <Button
               variant="contained"
-              onClick={() => dispatch(cancelProcess())}
+              onClick={() => {
+                dispatch(decreaseCost(EnergyConsumingTypes.LIGHTS));
+                dispatch(cancelProcess());
+              }}
             >
               cancel
             </Button>
@@ -122,7 +126,7 @@ const VendingMachine = () => {
               <Temperature></Temperature>
             </div>
             <div>
-              <Energy></Energy>
+              <Energy selection={selection}></Energy>
             </div>
           </div>
         </div>
