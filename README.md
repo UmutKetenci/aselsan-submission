@@ -5,7 +5,7 @@ Demo: https://splendorous-pavlova-67181b.netlify.app/
 **1) Prerequisites:**
 
 You need a running device with a resolution 1920x1080 (not responsive for other sizes yet). <br/>
-Node.js version 14 or higher (you can download it from https://nodejs.org)
+Node.js version 14 or higher (you can download it from https://nodejs.org)<br/>
 You need a IDE such as WebStorm or Visual Studio Code. Both are tested and both works for this application.
 
 **2) Installation:**
