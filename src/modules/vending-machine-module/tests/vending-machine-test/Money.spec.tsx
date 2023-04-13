@@ -1,9 +1,9 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
-import Money from "./Money";
-import store, { acceptMoney } from "../../store/store";
+import store, { acceptMoney } from "../../../../store/store";
 import { useDispatch } from "react-redux";
+import Money from "../../components/Money/Money";
 
 describe("Money component", () => {
   const dispatch = useDispatch;

@@ -16,7 +16,7 @@ $vending-machine-bg-color: rgb(204, 201, 201);
   min-width: 6rem;
 }
 :root {
-  background-image: url("./assets/images/vending-machine-place.jpeg");
+  background-image: url("../assets/images/vending-machine-place.jpeg");
   background-position: center;
   background-size: cover;
   font-family: "Courier New", Courier, monospace;
@@ -25,9 +25,9 @@ $vending-machine-bg-color: rgb(204, 201, 201);
 .vending-machine-container {
   background-color: $vending-machine-bg-color;
   display: flex;
-  width: 65%;
+  width: 95%;
   margin: 0 auto;
-  height: 75vh;
+  height: 85vh;
   border: 1px solid $border-color-black;
   border-radius: $border-radius;
   .products {
@@ -106,7 +106,7 @@ $vending-machine-bg-color: rgb(204, 201, 201);
   justify-items: center;
   .single-product {
     padding: 0.5rem;
-    width: 5rem;
+    width: 8rem;
     border: 1px solid $border-color-black;
   }
 }

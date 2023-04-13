@@ -2,8 +2,8 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
-import Temperature from "./Temperature";
-import { rootReducer } from "../../store/store";
+import { rootReducer } from "../../../../store/store";
+import Temperature from "../../components/Temperature/Temperature";
 
 describe("Temperature component", () => {
   let store = createStore(rootReducer);

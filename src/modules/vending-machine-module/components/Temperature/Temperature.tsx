@@ -6,7 +6,7 @@ import {
   TemperatureState,
   decreaseTemperature,
   increaseTemperature,
-} from "../../store/store";
+} from "../../../../store/store";
 
 const Temperature = () => {
   const temperatureState: TemperatureState = useSelector((state: RootState) => {
@@ -23,7 +23,7 @@ const Temperature = () => {
     }, 5000);
     return () => clearInterval(temperature);
   }, [temperatureState.isOverheating]);
-  return <div>Temperature: {temperatureState.temperature}</div>;
+  return <div>Vending Machine Temperature: {temperatureState.temperature}</div>;
 };
 
 export default Temperature;

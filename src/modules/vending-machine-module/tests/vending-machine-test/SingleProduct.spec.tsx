@@ -1,12 +1,14 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import SingleProduct from "./SingleProduct";
+import SingleProduct from "../../components/Products/SingleProduct";
 
 const mockProduct = {
   id: 1,
   name: "Test Product",
   quantity: 5,
   price: 10,
+  currentTemperature: 25,
+  desiredTemperature: 25,
 };
 
 describe("SingleProduct component", () => {

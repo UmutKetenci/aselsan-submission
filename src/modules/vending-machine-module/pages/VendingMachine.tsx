@@ -6,19 +6,20 @@ import {
   cancelProcess,
   collectMoney,
   completePurchase,
+  increaseProductTemperature,
   increaseTemperature,
   increaseTime,
   resetMachine,
   selectProductNumber,
-} from "../store/store";
+} from "../../../store/store";
 import { useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import { Button } from "@mui/material";
-import Products from "./Products/Products";
-import BalanceDisplay from "./DigitalDisplay/BalanceDisplay";
-import SelectionDisplay from "./DigitalDisplay/SelectionDisplay";
-import Temperature from "./Temperature/Temperature";
-import Energy from "./Energy/Energy";
+import Products from "../components/Products/Products";
+import BalanceDisplay from "../components/DigitalDisplay/BalanceDisplay";
+import SelectionDisplay from "../components/DigitalDisplay/SelectionDisplay";
+import Temperature from "../components/Temperature/Temperature";
+import Energy from "../components/Energy/Energy";
 
 const VendingMachine = () => {
   const vendingMachineState: VendingMachineState = useSelector(
@@ -28,6 +29,7 @@ const VendingMachine = () => {
   const dispatch: Dispatch = useDispatch();
   const buttonNumbers = Array.from({ length: 9 }, (_, index) => index + 1); //creates number buttons from 1 to 9
   const handleCompletePurchase = () => {
+    dispatch(increaseProductTemperature(selection));
     dispatch(increaseTemperature());
     dispatch(completePurchase());
     setSelection(0);

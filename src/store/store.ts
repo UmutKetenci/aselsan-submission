@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from "redux";
-import Money from "../components/Money/Money";
+import Money from "../modules/vending-machine-module/components/Money/Money";
 import { toast } from "react-toastify";
 
 /* VENDING MACHINE STATE */
@@ -10,6 +10,7 @@ export interface VendingMachineState {
   refundAmount: number;
   earnedMoney: number;
   time: number; // States the elapsed time
+  lastTimeSinceMoneyAccept: number;
 }
 
 export interface Product {
@@ -17,25 +18,91 @@ export interface Product {
   name: string;
   price: number;
   quantity: number;
+  currentTemperature: number;
+  desiredTemperature: number;
 }
 
 export const initialVendingMachineState: VendingMachineState = {
   balance: 0,
   products: [
-    { id: 1, name: "Water", price: 25, quantity: 10 },
-    { id: 2, name: "Coke", price: 35, quantity: 10 },
-    { id: 3, name: "Soda", price: 45, quantity: 10 },
-    { id: 4, name: "", price: 0, quantity: 0 },
-    { id: 5, name: "", price: 0, quantity: 0 },
-    { id: 6, name: "", price: 0, quantity: 0 },
-    { id: 7, name: "", price: 0, quantity: 0 },
-    { id: 8, name: "", price: 0, quantity: 0 },
-    { id: 9, name: "", price: 0, quantity: 0 },
+    {
+      id: 1,
+      name: "Water",
+      price: 25,
+      quantity: 10,
+      desiredTemperature: 20,
+      currentTemperature: 25,
+    },
+    {
+      id: 2,
+      name: "Coke",
+      price: 35,
+      quantity: 10,
+      desiredTemperature: 10,
+      currentTemperature: 25,
+    },
+    {
+      id: 3,
+      name: "Soda",
+      price: 45,
+      quantity: 10,
+      desiredTemperature: 7,
+      currentTemperature: 25,
+    },
+    {
+      id: 4,
+      name: "",
+      price: 0,
+      quantity: 0,
+      currentTemperature: 0,
+      desiredTemperature: 0,
+    },
+    {
+      id: 5,
+      name: "",
+      price: 0,
+      quantity: 0,
+      currentTemperature: 0,
+      desiredTemperature: 0,
+    },
+    {
+      id: 6,
+      name: "",
+      price: 0,
+      quantity: 0,
+      currentTemperature: 0,
+      desiredTemperature: 0,
+    },
+    {
+      id: 7,
+      name: "",
+      price: 0,
+      quantity: 0,
+      currentTemperature: 0,
+      desiredTemperature: 0,
+    },
+    {
+      id: 8,
+      name: "",
+      price: 0,
+      quantity: 0,
+      currentTemperature: 0,
+      desiredTemperature: 0,
+    },
+    {
+      id: 9,
+      name: "",
+      price: 0,
+      quantity: 0,
+      currentTemperature: 0,
+      desiredTemperature: 0,
+    },
   ],
   selectedProduct: null,
   refundAmount: 0,
   earnedMoney: 0,
   time: 0,
+  lastTimeSinceMoneyAccept: new Date().getTime(),
 };
 
 enum VendingMachineActionTypes {
@@ -46,6 +113,8 @@ enum VendingMachineActionTypes {
   COLLECT_MONEY = "COLLECT_MONEY",
   RESET_MACHINE = "RESET_MACHINE",
   INCREASE_TIME = "INCREASE_TIME",
+  DECREASE_PRODUCT_TEMPERATURE = "DECREASE_PRODUCT_TEMPERATURE",
+  INCREASE_PRODUCT_TEMPERATURE = "INCREASE_PRODUCT_TEMPERATURE",
 }
 
 interface SelectProductNumberAction {
@@ -78,6 +147,16 @@ interface IncreaseTimeAction {
   type: typeof VendingMachineActionTypes.INCREASE_TIME; //increases time in desired interval
 }
 
+interface IncreaseProductTemperatureAction {
+  payload: number;
+  type: typeof VendingMachineActionTypes.INCREASE_PRODUCT_TEMPERATURE; //Increases product's temperature (Slot temperature)
+}
+
+interface DecreaseProductTemperatureAction {
+  payload: number;
+  type: typeof VendingMachineActionTypes.DECREASE_PRODUCT_TEMPERATURE; //Decreases product's temperature
+}
+
 type VendingMachineActions =
   | SelectProductNumberAction
   | AcceptMoneyAction
@@ -85,7 +164,9 @@ type VendingMachineActions =
   | CollectMoneyAction
   | ResetMachineAction
   | CompletePurchaseAction
-  | IncreaseTimeAction;
+  | IncreaseTimeAction
+  | IncreaseProductTemperatureAction
+  | DecreaseProductTemperatureAction;
 
 function vendingMachineReducer(
   state = initialVendingMachineState,
@@ -106,11 +187,25 @@ function vendingMachineReducer(
         return state;
       }
     case VendingMachineActionTypes.ACCEPT_MONEY:
-      /* Scam protection functions should be activated here before this action. Should only go in if scamming:false */
-      return {
-        ...state,
-        balance: state.balance + action.payload,
-      };
+      const currentTime = new Date().getTime();
+      const timeSinceLastAccept = currentTime - state.lastTimeSinceMoneyAccept;
+      const amount = action.payload;
+      console.log(currentTime, timeSinceLastAccept);
+
+      if (timeSinceLastAccept < 1000 || amount > 20) {
+        toast("Scam detected! Money refunded back to customer.");
+        return {
+          ...state,
+          refundAmount: action.payload,
+          lastTimeSinceMoneyAccept: currentTime,
+        };
+      } else {
+        return {
+          ...state,
+          balance: state.balance + action.payload,
+          lastTimeSinceMoneyAccept: currentTime,
+        };
+      }
     case VendingMachineActionTypes.CANCEL_PROCESS:
       if (state.balance > 0) {
         toast(`${state.balance} unit money refunded back to customer`);
@@ -186,6 +281,25 @@ function vendingMachineReducer(
       };
     case VendingMachineActionTypes.INCREASE_TIME:
       return { ...state, time: state.time + 1 };
+    case VendingMachineActionTypes.DECREASE_PRODUCT_TEMPERATURE:
+      const decreaseProductIndex = state.products.findIndex(
+        (product: Product) => {
+          return product.id === action.payload;
+        }
+      );
+      const decreaseUpdatedProducts = [...state.products];
+      decreaseUpdatedProducts[decreaseProductIndex].currentTemperature--;
+      return { ...state, products: decreaseUpdatedProducts };
+    case VendingMachineActionTypes.INCREASE_PRODUCT_TEMPERATURE:
+      const increaseProductIndex = state.products.findIndex(
+        (product: Product) => {
+          return product.id === action.payload;
+        }
+      );
+      const increaseUpdatedProducts = [...state.products];
+      increaseUpdatedProducts[increaseProductIndex].currentTemperature++;
+      return { ...state, products: increaseUpdatedProducts };
+
     default:
       return state;
   }
@@ -221,50 +335,36 @@ export function increaseTime(): IncreaseTimeAction {
   return { type: VendingMachineActionTypes.INCREASE_TIME };
 }
 
+export function decreaseProductTemperature(
+  id: number
+): DecreaseProductTemperatureAction {
+  return {
+    type: VendingMachineActionTypes.DECREASE_PRODUCT_TEMPERATURE,
+    payload: id,
+  };
+}
+
+export function increaseProductTemperature(
+  id: number
+): IncreaseProductTemperatureAction {
+  return {
+    type: VendingMachineActionTypes.INCREASE_PRODUCT_TEMPERATURE,
+    payload: id,
+  };
+}
 /* SCAM PROTECTION STATE */
 
 interface ScamProtectionState {
+  lastTimeSinceMoneyAccept: number;
   scamming: boolean;
+  amount: number;
 }
 
 const initialScamProtectionState: ScamProtectionState = {
+  lastTimeSinceMoneyAccept: new Date().getTime(),
   scamming: false,
+  amount: 0,
 };
-
-enum ScamProtectionActionTypes {
-  DETECT_SCAM = "DETECT_SCAM",
-  STOP_SCAM = "STOP_SCAM",
-}
-
-interface DetectScammingAction {
-  type: ScamProtectionActionTypes.DETECT_SCAM;
-}
-
-interface StopScammingAction {
-  type: ScamProtectionActionTypes.STOP_SCAM;
-}
-
-type ScamProtectionActions = DetectScammingAction | StopScammingAction;
-
-export function scamProtectionReducer( // I couldn't understand where and when I should detect scams.
-  state = initialScamProtectionState,
-  action: ScamProtectionActions
-): ScamProtectionState {
-  switch (action.type) {
-    case ScamProtectionActionTypes.DETECT_SCAM:
-      return { ...state, scamming: true };
-    case ScamProtectionActionTypes.STOP_SCAM:
-      return { ...state, scamming: true };
-  }
-  return state;
-}
-
-export function detectScam(): DetectScammingAction {
-  return { type: ScamProtectionActionTypes.DETECT_SCAM };
-}
-export function stopScam(): StopScammingAction {
-  return { type: ScamProtectionActionTypes.STOP_SCAM };
-}
 
 /* Temperature state */
 
@@ -342,13 +442,11 @@ export function increaseTemperature(): IncreaseTemperatureAction {
 export interface RootState {
   vendingMachineState: VendingMachineState;
   temperatureState: TemperatureState;
-  scamProtectionState: ScamProtectionState;
 }
 
 export const rootReducer = combineReducers({
   vendingMachineState: vendingMachineReducer,
   temperatureState: temperatureReducer,
-  scamProtectionState: scamProtectionReducer,
 });
 
 const store = createStore(rootReducer);

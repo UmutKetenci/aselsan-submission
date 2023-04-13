@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import SelectionDisplay from "./SelectionDisplay";
+import SelectionDisplay from "../../components/DigitalDisplay/SelectionDisplay";
 
 describe("SelectionDisplay", () => {
   it("should render the selected item", () => {
