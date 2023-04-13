@@ -6,7 +6,8 @@ Demo: https://splendorous-pavlova-67181b.netlify.app/
 
 You need a running device with a resolution 1920x1080 (not responsive for other sizes yet). <br/>
 Node.js version 14 or higher (you can download it from https://nodejs.org)<br/>
-You need a IDE such as WebStorm or Visual Studio Code. Both are tested and both works for this application.
+You need a IDE such as WebStorm or Visual Studio Code. Both are tested and both works for this application. <br/>
+Note: After following the steps above, if the app does not run IDE Eslint strictions may be preventing your code from running locally giving warnings or errors.
 
 **2) Installation:**
 
