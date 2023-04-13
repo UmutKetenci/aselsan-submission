@@ -36,6 +36,7 @@ selectedProduct: the currently selected product by the customer <br/>
 refundAmount: the amount of money that will be refunded if the process is canceled <br/>
 earnedMoney: the amount of money earned by the vending machine <br/>
 time: the time elapsed since the vending machine was last reset <br/>
+lastTimeSinceMoneyAccept: the last time money was accepted by the machine; </br>
 
 The vending machine actions are defined in the VendingMachineActionTypes enum, and they are:
 
@@ -46,6 +47,8 @@ CANCEL_PROCESS: cancels the current process and refunds the money <br/>
 COLLECT_MONEY: collects the earned money from the vending machine <br/>
 RESET_MACHINE: resets the vending machine <br/>
 INCREASE_TIME: increases the elapsed time <br/>
+DECREASE_PRODUCT_TEMPERATURE = Decreases slot's temperature to desired value. </br>
+INCREASE_PRODUCT_TEMPERATURE = Increases slot's temperature to desired value. </br>
 
 The vendingMachineReducer function is responsible for updating the vending machine state based on the actions dispatched to the store. The reducer function takes two arguments: the current state and the action to be performed. The function returns a new state object with the updated values.
 
@@ -53,17 +56,9 @@ The VendingMachineActions type is a union type of all possible action types in t
 
 The initialVendingMachineState object defines the initial state of the vending machine, including the available products, their quantities, and prices.
 
-ScamProtectionState has only one property, scamming, which is a boolean that indicates whether a scam is currently being detected or not.
+Repeated money insertions are not allowed as it is detected as scam. You have to wait a second before inserting another unit money.
 
-The reducer function, scamProtectionReducer, takes in the current state and an action, and returns a new state based on the action type. If the action type is DETECT_SCAM, it returns a new state with scamming set to true. If the action type is STOP_SCAM, it also returns a new state with scamming set to true.
-
-The DetectScammingAction and StopScammingAction interfaces represent the two types of actions that can be dispatched to the reducer. The DetectScammingAction has a type of DETECT_SCAM, while the StopScammingAction has a type of STOP_SCAM.
-
-The detectScam and stopScam functions are action creator functions, which create and return actions of the corresponding types.
-
-The purpose of this code implements a basic scam detection feature in a web application. However, I couldn't understand how I could implement these states to the app so I have just left them to be used in the future.
-
-The same problem also occurs when it comes to implement components consume rates. I couldn't understand how I could implement energy consumption state to the application.
+EnergyState is responsible for keeping track of consume rates of components such as lighting, button interactions and cooling/heating.
 
 TemperatureState manages the state of a temperature control feature in a web application. The TemperatureState interface defines the shape of the state object, which has three properties: temperature, isOverheating, and selectedTemperatureCelsius.
 
