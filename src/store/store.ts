@@ -1,5 +1,4 @@
 import { createStore, combineReducers } from "redux";
-import Money from "../modules/vending-machine-module/components/Money/Money";
 import { toast } from "react-toastify";
 
 /* VENDING MACHINE STATE */
@@ -287,19 +286,30 @@ function vendingMachineReducer(
           return product.id === action.payload;
         }
       );
-      const decreaseUpdatedProducts = [...state.products];
-      decreaseUpdatedProducts[decreaseProductIndex].currentTemperature--;
-      return { ...state, products: decreaseUpdatedProducts };
+      if (
+        decreaseProductIndex &&
+        state.products[decreaseProductIndex]?.quantity
+      ) {
+        const decreaseUpdatedProducts = [...state.products];
+        decreaseUpdatedProducts[decreaseProductIndex].currentTemperature--;
+        return { ...state, products: decreaseUpdatedProducts };
+      }
+      return state;
     case VendingMachineActionTypes.INCREASE_PRODUCT_TEMPERATURE:
       const increaseProductIndex = state.products.findIndex(
         (product: Product) => {
           return product.id === action.payload;
         }
       );
-      const increaseUpdatedProducts = [...state.products];
-      increaseUpdatedProducts[increaseProductIndex].currentTemperature++;
-      return { ...state, products: increaseUpdatedProducts };
-
+      if (
+        increaseProductIndex &&
+        state.products[increaseProductIndex]?.quantity > 0
+      ) {
+        const increaseUpdatedProducts = [...state.products];
+        increaseUpdatedProducts[increaseProductIndex].currentTemperature++;
+        return { ...state, products: increaseUpdatedProducts };
+      }
+      return state;
     default:
       return state;
   }
@@ -352,19 +362,6 @@ export function increaseProductTemperature(
     payload: id,
   };
 }
-/* SCAM PROTECTION STATE */
-
-interface ScamProtectionState {
-  lastTimeSinceMoneyAccept: number;
-  scamming: boolean;
-  amount: number;
-}
-
-const initialScamProtectionState: ScamProtectionState = {
-  lastTimeSinceMoneyAccept: new Date().getTime(),
-  scamming: false,
-  amount: 0,
-};
 
 /* Temperature state */
 
@@ -439,36 +436,117 @@ export function increaseTemperature(): IncreaseTemperatureAction {
   return { type: TemperatureTypes.HEATING };
 }
 
+/* Energy State */
+
+export interface EnergyState {
+  heat_or_cool: boolean;
+  lights: boolean;
+  button_interaction: boolean;
+  cost: number;
+}
+
+export const initialEnergyState: EnergyState = {
+  heat_or_cool: false,
+  lights: false,
+  button_interaction: false,
+  cost: 0,
+};
+
+enum EnergyStateActionTypes {
+  INCREASE_COST = "INCREASE_COST",
+  DECREASE_COST = "DECREASE_COST",
+}
+
+export enum EnergyConsumingTypes {
+  LIGHTS = "LIGHTS",
+  HEAT_OR_COOL = "HEAT_OR_COOL",
+  BUTTON_INTERACTION = "BUTTON_INTERACTION",
+}
+
+interface IncreaseCostAction {
+  payload: string;
+  type: EnergyStateActionTypes.INCREASE_COST;
+}
+interface DecreaseCostAction {
+  payload: string;
+  type: EnergyStateActionTypes.DECREASE_COST;
+}
+
+type EnergyStateAction = IncreaseCostAction | DecreaseCostAction;
+
+export function energyStateReducer(
+  state = initialEnergyState,
+  action: EnergyStateAction
+): EnergyState {
+  switch (action.type) {
+    case EnergyStateActionTypes.INCREASE_COST:
+      if (
+        action.payload === EnergyConsumingTypes.BUTTON_INTERACTION &&
+        state.button_interaction !== true
+      ) {
+        return { ...state, button_interaction: true, cost: state.cost + 0.41 };
+      } else if (
+        action.payload === EnergyConsumingTypes.HEAT_OR_COOL &&
+        state.heat_or_cool !== true
+      ) {
+        return { ...state, heat_or_cool: true, cost: state.cost + 0.41 };
+      } else if (
+        action.payload === EnergyConsumingTypes.LIGHTS &&
+        state.lights !== true
+      ) {
+        return { ...state, lights: true, cost: state.cost + 0.41 };
+      } else {
+        return state;
+      }
+    case EnergyStateActionTypes.DECREASE_COST:
+      if (
+        action.payload === EnergyConsumingTypes.BUTTON_INTERACTION &&
+        state.button_interaction !== false
+      ) {
+        return { ...state, button_interaction: false, cost: state.cost - 0.41 };
+      } else if (
+        action.payload === EnergyConsumingTypes.HEAT_OR_COOL &&
+        state.heat_or_cool !== false
+      ) {
+        return { ...state, heat_or_cool: false, cost: state.cost - 0.41 };
+      } else if (
+        action.payload === EnergyConsumingTypes.LIGHTS &&
+        state.lights !== false
+      ) {
+        return { ...state, lights: false, cost: state.cost - 0.41 };
+      } else {
+        return state;
+      }
+  }
+  return { ...state };
+}
+
+export function decreaseCost(energyCostVariable: string): EnergyStateAction {
+  return {
+    type: EnergyStateActionTypes.DECREASE_COST,
+    payload: energyCostVariable,
+  };
+}
+
+export function increaseCost(energyCostVariable: string): EnergyStateAction {
+  return {
+    type: EnergyStateActionTypes.INCREASE_COST,
+    payload: energyCostVariable,
+  };
+}
+
 export interface RootState {
   vendingMachineState: VendingMachineState;
   temperatureState: TemperatureState;
+  energyState: EnergyState;
 }
 
 export const rootReducer = combineReducers({
   vendingMachineState: vendingMachineReducer,
   temperatureState: temperatureReducer,
+  energyState: energyStateReducer,
 });
 
 const store = createStore(rootReducer);
 
 export default store;
-
-/* Energy State */
-
-interface EnergyState {
-  // This code is not used in anywhere of the app. I planned to use it when an action was being used. It would simply increase the cost by 2.
-  cost: number;
-}
-
-const initialEnergyState = {
-  cost: 0,
-};
-
-/*  Money constant */
-export const moneyArray: Money[] = [
-  // I wanted to store my moneyArray here for easy approach.
-  { amount: 1, color: "gray" },
-  { amount: 5, color: "brown" },
-  { amount: 10, color: "red" },
-  { amount: 20, color: "green" },
-];

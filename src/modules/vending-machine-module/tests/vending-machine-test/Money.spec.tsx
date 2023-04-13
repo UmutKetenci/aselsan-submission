@@ -6,8 +6,6 @@ import { useDispatch } from "react-redux";
 import Money from "../../components/Money/Money";
 
 describe("Money component", () => {
-  const dispatch = useDispatch;
-
   beforeEach(() => {});
 
   test("should insert money and dispatch acceptMoney action", () => {

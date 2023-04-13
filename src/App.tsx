@@ -1,8 +1,8 @@
 import VendingMachine from "./modules/vending-machine-module/pages/VendingMachine";
-import { moneyArray } from "./store/store";
 import Money from "./modules/vending-machine-module/components/Money/Money";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { moneyArray } from "./assets/utils/constants";
 
 function App() {
   return (

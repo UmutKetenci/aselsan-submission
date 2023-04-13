@@ -1,11 +1,14 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import {
+  EnergyConsumingTypes,
+  EnergyState,
   RootState,
   VendingMachineState,
   cancelProcess,
   collectMoney,
   completePurchase,
+  increaseCost,
   increaseProductTemperature,
   increaseTemperature,
   increaseTime,
@@ -25,12 +28,18 @@ const VendingMachine = () => {
   const vendingMachineState: VendingMachineState = useSelector(
     (state: RootState) => state.vendingMachineState
   );
+  const energyState: EnergyState = useSelector(
+    (state: RootState) => state.energyState
+  );
   const [selection, setSelection] = React.useState(0);
   const dispatch: Dispatch = useDispatch();
+  dispatch(increaseCost(EnergyConsumingTypes.HEAT_OR_COOL));
   const buttonNumbers = Array.from({ length: 9 }, (_, index) => index + 1); //creates number buttons from 1 to 9
   const handleCompletePurchase = () => {
     dispatch(increaseProductTemperature(selection));
     dispatch(increaseTemperature());
+    dispatch(increaseCost(EnergyConsumingTypes.BUTTON_INTERACTION));
+    dispatch(increaseCost(EnergyConsumingTypes.LIGHTS));
     dispatch(completePurchase());
     setSelection(0);
   };
@@ -38,13 +47,18 @@ const VendingMachine = () => {
     const timer = setInterval(() => {
       //increases time
       dispatch(increaseTime());
-    }, 1000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
   return (
     <>
       <div className="vending-machine-container">
-        <div className="products">
+        <div
+          className="products"
+          style={{
+            backgroundColor: energyState.lights ? "#c3c28c" : "transparent",
+          }}
+        >
           <Products />
         </div>
         <div className="digital-display-and-buttons">
@@ -61,6 +75,10 @@ const VendingMachine = () => {
                   onClick={() => {
                     setSelection(button);
                     dispatch(selectProductNumber(button));
+                    dispatch(
+                      increaseCost(EnergyConsumingTypes.BUTTON_INTERACTION)
+                    );
+                    dispatch(increaseCost(EnergyConsumingTypes.LIGHTS));
                   }}
                 >
                   {button}

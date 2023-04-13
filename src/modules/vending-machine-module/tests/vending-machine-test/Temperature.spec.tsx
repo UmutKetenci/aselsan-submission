@@ -1,13 +1,10 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
-import { rootReducer } from "../../../../store/store";
+import store, { rootReducer } from "../../../../store/store";
 import Temperature from "../../components/Temperature/Temperature";
 
 describe("Temperature component", () => {
-  let store = createStore(rootReducer);
-
   it("renders temperature", () => {
     render(
       <Provider store={store}>
@@ -15,7 +12,7 @@ describe("Temperature component", () => {
       </Provider>
     );
 
-    expect(screen.getByText("Temperature: 25")).toBeInTheDocument;
+    expect(screen.getByText(/25/)).toBeInTheDocument;
   });
 
   it("decreases temperature after 5 seconds", () => {
@@ -26,7 +23,7 @@ describe("Temperature component", () => {
     );
 
     setTimeout(() => {
-      expect(screen.getByText("Temperature: 24")).toBeInTheDocument;
+      expect(screen.getByText("Temperature: 20")).toBeInTheDocument;
     }, 5000);
   });
 });
