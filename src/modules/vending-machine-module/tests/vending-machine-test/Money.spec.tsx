@@ -1,8 +1,6 @@
-import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
-import store, { acceptMoney } from "../../../../store/store";
-import { useDispatch } from "react-redux";
+import store from "../../../../store/store";
 import Money from "../../components/Money/Money";
 
 describe("Money component", () => {
