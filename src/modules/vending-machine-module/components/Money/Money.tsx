@@ -1,13 +1,12 @@
-import React from "react";
 import { useDispatch } from "react-redux";
 import { acceptMoney } from "../../../../store/store";
 import { toast } from "react-toastify";
 
-interface Money {
+export interface MoneyProp {
   color: string;
   amount: number;
 }
-const Money = (props: Money) => {
+const Money = (props: MoneyProp) => {
   const dispatch = useDispatch();
 
   const handleInsertMoney = (amount: number): void => {

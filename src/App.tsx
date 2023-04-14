@@ -1,5 +1,7 @@
 import VendingMachine from "./modules/vending-machine-module/pages/VendingMachine";
-import Money from "./modules/vending-machine-module/components/Money/Money";
+import Money, {
+  MoneyProp,
+} from "./modules/vending-machine-module/components/Money/Money";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { moneyArray } from "./assets/utils/constants";
@@ -10,7 +12,7 @@ function App() {
       <VendingMachine />
       <div>
         <div className="money-container">
-          {moneyArray.map((money: Money) => {
+          {moneyArray.map((money: MoneyProp) => {
             return (
               <Money
                 key={money.color}

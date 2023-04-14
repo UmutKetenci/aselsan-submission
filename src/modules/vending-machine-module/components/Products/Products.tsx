@@ -1,4 +1,3 @@
-import React from "react";
 import { Product, initialVendingMachineState } from "../../../../store/store";
 import SingleProduct from "./SingleProduct";
 const productsArray: Product[] = initialVendingMachineState.products;

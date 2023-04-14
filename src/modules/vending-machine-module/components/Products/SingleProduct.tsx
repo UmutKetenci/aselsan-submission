@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   Product,
   RootState,
@@ -37,7 +37,7 @@ const SingleProduct = (props: ChildProp) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [temperatureState.temperature]);
+  }, [temperatureState.temperature, dispatch, props]);
   //below, selected products color will turn green when selected.
   return (
     <div

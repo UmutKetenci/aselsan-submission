@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import SingleProduct from "../../components/Products/SingleProduct";
 import store from "../../../../store/store";

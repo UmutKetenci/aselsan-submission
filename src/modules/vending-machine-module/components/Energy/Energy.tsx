@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   EnergyConsumingTypes,
@@ -30,7 +30,7 @@ const Energy = (props: EnergyProps) => {
     return () => {
       clearTimeout(buttonInteractionTimer);
     };
-  }, [props.selection]);
+  }, [props.selection, dispatch, energyState.button_interaction]);
 
   return (
     <div>

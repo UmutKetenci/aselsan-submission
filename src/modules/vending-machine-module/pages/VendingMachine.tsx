@@ -50,7 +50,7 @@ const VendingMachine = () => {
       dispatch(increaseTime());
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [dispatch]);
   return (
     <>
       <div className="vending-machine-container">

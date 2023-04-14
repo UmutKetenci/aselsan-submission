@@ -22,7 +22,7 @@ const Temperature = () => {
       }
     }, 5000);
     return () => clearInterval(temperature);
-  }, [temperatureState.isOverheating]);
+  }, [temperatureState.isOverheating, dispatch]);
   return <div>Vending Machine Temperature: {temperatureState.temperature}</div>;
 };
 

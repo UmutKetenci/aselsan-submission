@@ -1,7 +1,7 @@
-import Money from "../../modules/vending-machine-module/components/Money/Money";
+import { MoneyProp } from "../../modules/vending-machine-module/components/Money/Money";
 
 /*  Money constant */
-export const moneyArray: Money[] = [
+export const moneyArray: MoneyProp[] = [
   // I wanted to store my moneyArray here for easy approach.
   { amount: 1, color: "gray" },
   { amount: 5, color: "brown" },
